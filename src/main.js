@@ -13,10 +13,36 @@ const SAMPLE = {
     { text: 'How long does sunlight take to reach Earth?', options: ['8 seconds', '8 minutes', '80 minutes', '8 hours'], correct: 1, seconds: 25 },
   ], updatedAt: Date.now(),
 };
+const DIWALI_QUIZ = {
+  id: 'sample-diwali', templateVersion: 4, title: 'Vanguard, Texas & Diwali Trivia', description: '20 mixed questions: 10 on Diwali, 7 challenging Vanguard history questions, and 3 Dallas–Plano area questions.', category: 'Festivals',
+  scoring: 'speed', questions: [
+    { text: 'Diwali is widely known by which name?', options: ['Festival of Lights', 'Festival of Rain', 'Harvest of Flowers', 'Festival of Music'], correct: 0, seconds: 20 },
+    { text: 'Vanguard has an unusual ownership structure. Which statement is accurate?', options: ['It is listed on the NYSE', 'It is owned by an insurance conglomerate', 'Its member funds are owned by their fund shareholders', 'It is owned by the U.S. Treasury'], correct: 2, seconds: 35 },
+    { text: 'Which river runs through Dallas?', options: ['Brazos River', 'Red River', 'Colorado River', 'Trinity River'], correct: 3, seconds: 25 },
+    { text: 'In a widely known Ramayana tradition, whose return to Ayodhya is celebrated at Diwali?', options: ['Krishna', 'Arjuna', 'Rama', 'Hanuman'], correct: 2, seconds: 25 },
+    { text: 'Which fund is Vanguard’s oldest, launched in 1929?', options: ['Windsor Fund', 'Wellington Fund', 'Explorer Fund', 'Magellan Fund'], correct: 1, seconds: 35 },
+    { text: 'Diwali is generally observed on which lunar day in the Hindu month of Kartika?', options: ['New moon (Amavasya)', 'Full moon (Purnima)', 'Eighth day (Ashtami)', 'First quarter'], correct: 0, seconds: 35 },
+    { text: 'What was the original name of Vanguard’s first index fund for individual investors?', options: ['Wellington Index Portfolio', 'First Market Average Fund', 'First Index Investment Trust', 'Investor Growth Trust'], correct: 2, seconds: 35 },
+    { text: 'Plano is in which Texas county?', options: ['Denton County', 'Collin County', 'Travis County', 'Bexar County'], correct: 1, seconds: 25 },
+    { text: 'What does the Sikh observance Bandi Chhor Divas commemorate?', options: ['The founding of Amritsar', 'The first printing of the Guru Granth Sahib', 'The harvest at Anandpur', 'Guru Hargobind’s release from Gwalior Fort with 52 rulers'], correct: 3, seconds: 35 },
+    { text: 'John C. Bogle hoped to raise $50–150 million for the First Index Investment Trust. About how much did the initial offering raise?', options: ['$150 million', '$11 million', '$50 million', '$1.1 billion'], correct: 1, seconds: 40 },
+    { text: 'In the Jain tradition, Diwali marks the nirvana of which teacher?', options: ['Rishabhanatha', 'Mahavira', 'Parshvanatha', 'Gautama Buddha'], correct: 1, seconds: 30 },
+    { text: 'Who first led the portfolio management effort for Vanguard’s First Index Investment Trust?', options: ['John C. Bogle', 'Burton Malkiel', 'Jan M. Twardowski', 'William Fouse'], correct: 2, seconds: 40 },
+    { text: 'Which city is home to AT&T Stadium, often mistakenly called “the stadium in Dallas”?', options: ['Arlington', 'Plano', 'Fort Worth', 'Irving'], correct: 0, seconds: 30 },
+    { text: 'Which celebration in Nepal, around the same season as Diwali, honors crows, dogs, and cows on different days?', options: ['Holi', 'Baisakhi', 'Losar', 'Tihar'], correct: 3, seconds: 35 },
+    { text: 'What did Vanguard establish in 1981 to reduce reliance on external managers?', options: ['A private equity group', 'An in-house Fixed Income Group', 'An international stock exchange', 'A banking subsidiary'], correct: 1, seconds: 40 },
+    { text: 'In parts of India, which pair is associated with the defeat of Narakasura around Naraka Chaturdashi?', options: ['Rama and Sita', 'Shiva and Parvati', 'Krishna and Satyabhama', 'Indra and Lakshmi'], correct: 2, seconds: 35 },
+    { text: 'What low-commission service did Vanguard begin offering in 1983?', options: ['Mortgage lending', 'Cryptocurrency trading', 'Foreign currency exchange', 'Brokerage for stocks and bonds'], correct: 3, seconds: 40 },
+    { text: 'What is a common name for the traditional floor designs made for Diwali?', options: ['Ikebana', 'Batik', 'Rangoli', 'Origami'], correct: 2, seconds: 25 },
+    { text: 'Bhai Dooj primarily celebrates which relationship?', options: ['Teacher and student', 'Brothers and sisters', 'Neighbors and guests', 'Farmers and cattle'], correct: 1, seconds: 25 },
+    { text: 'In a common North Indian five-day Diwali sequence, which observance follows Diwali night (Lakshmi Puja)?', options: ['Bhai Dooj', 'Dhanteras', 'Naraka Chaturdashi', 'Govardhan Puja'], correct: 3, seconds: 35 },
+  ], updatedAt: Date.now(),
+};
 
 const freshQuestion = () => ({ text: '', options: ['', '', '', ''], correct: 0, seconds: 20 });
 const starterQuizzes = [
   SAMPLE,
+  DIWALI_QUIZ,
   { id: 'sample-food', title: 'The great food debate', description: 'A few tasty questions to warm up the room', category: 'Food & drink', scoring: 'speed', questions: [
     { text: 'Which nut is used to make marzipan?', options: ['Cashew', 'Almond', 'Hazelnut', 'Pistachio'], correct: 1, seconds: 20 },
     { text: 'Where did pizza as we know it originate?', options: ['Naples', 'Paris', 'Athens', 'London'], correct: 0, seconds: 20 },
@@ -27,7 +53,16 @@ const starterQuizzes = [
 function readQuizzes() {
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-    if (Array.isArray(parsed)) return parsed;
+    if (Array.isArray(parsed)) {
+      const diwaliIndex = parsed.findIndex((quiz) => quiz.id === DIWALI_QUIZ.id);
+      if (diwaliIndex < 0) return [DIWALI_QUIZ, ...parsed];
+      if ((parsed[diwaliIndex].templateVersion || 1) < DIWALI_QUIZ.templateVersion) {
+        const updated = [...parsed];
+        updated[diwaliIndex] = DIWALI_QUIZ;
+        return updated;
+      }
+      return parsed;
+    }
   } catch { /* use examples when browser storage is unavailable */ }
   return starterQuizzes;
 }
@@ -35,7 +70,7 @@ function readQuizzes() {
 const state = {
   page: 'home', quizzes: readQuizzes(), selectedQuiz: null, session: null, unsubscribe: null,
   answers: new Map(), tab: 'all', modal: false, editingQuiz: null,
-  joinPin: '', playerName: '', participant: false,
+  joinPin: '', playerName: '', participant: false, participantsExpanded: false,
 };
 
 function saveQuizzes() {
@@ -88,8 +123,12 @@ function shell(content) {
   </div>`;
 }
 
-function participantShell(content) {
-  return `<div class="participant-app" data-theme="dark"><main class="participant-main">${content}</main><div id="toast-root" class="toast-root" aria-live="polite"></div></div>`;
+function participantShell(content, diwali = false) {
+  return `<div class="participant-app ${diwali ? 'diwali-theme' : ''}" data-theme="dark"><main class="participant-main">${diwali ? diwaliBanner() : ''}${content}</main><div id="toast-root" class="toast-root" aria-live="polite"></div></div>`;
+}
+
+function diwaliBanner() {
+  return '<div class="diwali-banner" aria-label="Diwali, Festival of Lights"><span class="diwali-lamp">🪔</span><div><b>DIWALI TRIVIA</b><span>Festival of Lights</span></div><span class="diwali-firework-emoji" aria-hidden="true">🎆 ✨ 🎇</span><span class="diwali-firework-glow" aria-hidden="true"></span></div>';
 }
 
 function homePage() {
@@ -120,7 +159,7 @@ function resultsPage() {
 function quizModal() {
   const quiz = state.editingQuiz || { id: null, title: '', description: '', category: 'General', scoring: 'speed', questions: [freshQuestion()] };
   const q = quiz.questions?.length ? quiz.questions : [freshQuestion()];
-  return `<div class="modal-backdrop" data-action="close-modal"><section class="quiz-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><header class="modal-header"><div><span class="section-kicker">${quiz.id ? 'MAKE IT EVEN BETTER' : 'THE FUN STARTS HERE'}</span><h2 id="modal-title">${quiz.id ? 'Edit your quiz' : 'Create a quiz'}</h2></div><button class="icon-btn" data-action="close-modal" aria-label="Close">${icon('close')}</button></header><div class="modal-body"><label class="field-label">QUIZ TITLE<input class="text-input" id="quiz-title" maxlength="60" placeholder="e.g. The great space quiz" value="${escapeHtml(quiz.title)}"></label><label class="field-label">A LITTLE DESCRIPTION <span class="optional">OPTIONAL</span><input class="text-input" id="quiz-description" maxlength="120" placeholder="What’s this quiz all about?" value="${escapeHtml(quiz.description)}"></label><label class="field-label">CATEGORY<select class="text-input" id="quiz-category">${['General', 'Science', 'History', 'Food & drink', 'Pop culture', 'Geography', 'Other'].map((category) => `<option ${quiz.category === category ? 'selected' : ''}>${category}</option>`).join('')}</select></label><div class="scoring-field"><div><span class="field-label">HOW SHOULD POINTS WORK?</span><span class="field-hint">Choose how your players earn points.</span></div><div class="scoring-toggle"><button data-action="set-scoring" data-scoring="speed" class="${quiz.scoring !== 'plain' ? 'selected' : ''}">Speed bonus</button><button data-action="set-scoring" data-scoring="plain" class="${quiz.scoring === 'plain' ? 'selected' : ''}">Correct only</button></div></div><div class="questions-heading"><div><span class="field-label">YOUR QUESTIONS</span><span class="field-hint">Every question has four possible answers.</span></div><span class="question-count">${q.length} / 30</span></div><div class="question-editor-list">${q.map(questionEditor).join('')}</div><button class="add-question-btn" data-action="add-question">${icon('plus', 16)} Add another question</button></div><footer class="modal-footer"><button class="text-btn" data-action="close-modal">Cancel</button><button class="btn btn-primary" data-action="save-quiz">${icon('check', 16)} Save quiz</button></footer></section></div>`;
+  return `<div class="modal-backdrop" data-action="close-modal"><section class="quiz-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><header class="modal-header"><div><span class="section-kicker">${quiz.id ? 'MAKE IT EVEN BETTER' : 'THE FUN STARTS HERE'}</span><h2 id="modal-title">${quiz.id ? 'Edit your quiz' : 'Create a quiz'}</h2></div><button class="icon-btn" data-action="close-modal" aria-label="Close">${icon('close')}</button></header><div class="modal-body"><label class="field-label">QUIZ TITLE<input class="text-input" id="quiz-title" maxlength="60" placeholder="e.g. The great space quiz" value="${escapeHtml(quiz.title)}"></label><label class="field-label">A LITTLE DESCRIPTION <span class="optional">OPTIONAL</span><input class="text-input" id="quiz-description" maxlength="120" placeholder="What’s this quiz all about?" value="${escapeHtml(quiz.description)}"></label><label class="field-label">CATEGORY<select class="text-input" id="quiz-category">${['General', 'Science', 'History', 'Food & drink', 'Pop culture', 'Geography', 'Festivals', 'Other'].map((category) => `<option ${quiz.category === category ? 'selected' : ''}>${category}</option>`).join('')}</select></label><div class="scoring-field"><div><span class="field-label">HOW SHOULD POINTS WORK?</span><span class="field-hint">Choose how your players earn points.</span></div><div class="scoring-toggle"><button data-action="set-scoring" data-scoring="speed" class="${quiz.scoring !== 'plain' ? 'selected' : ''}">Speed bonus</button><button data-action="set-scoring" data-scoring="plain" class="${quiz.scoring === 'plain' ? 'selected' : ''}">Correct only</button></div></div><div class="questions-heading"><div><span class="field-label">YOUR QUESTIONS</span><span class="field-hint">Every question has four possible answers.</span></div><span class="question-count">${q.length} / 30</span></div><div class="question-editor-list">${q.map(questionEditor).join('')}</div><button class="add-question-btn" data-action="add-question">${icon('plus', 16)} Add another question</button></div><footer class="modal-footer"><button class="text-btn" data-action="close-modal">Cancel</button><button class="btn btn-primary" data-action="save-quiz">${icon('check', 16)} Save quiz</button></footer></section></div>`;
 }
 
 function questionEditor(question, index) {
@@ -133,20 +172,21 @@ function livePage() {
   const isHost = !state.participant;
   if (!session) return state.participant || state.joinPin ? participantShell(joinScreen()) : shell(`<div class="page-content inner-page"><div class="empty-state report-empty"><span>✳</span><h3>No game is running yet</h3><p>Pick one of your quizzes to get a room started.</p><button class="btn btn-primary" data-action="library">Choose a quiz ${icon('arrow', 15)}</button></div></div>`);
   const player = isHost ? null : (session.players.find((p) => p.id === state.participantId) || session.own_player);
-  if (!isHost && !player) return participantShell(joinScreen());
+  const isDiwali = /diwali|deepavali/i.test(`${session.quiz.title} ${session.quiz.category || ''}`);
+  if (!isHost && !player) return participantShell(joinScreen(), isDiwali);
   const qIndex = session.current;
   const question = session.quiz.questions[qIndex];
   const phase = session.status;
   const total = session.quiz.questions.length;
   const ranks = ranking(session);
   const remaining = phase === 'question' ? Math.max(0, Math.ceil((session.deadline - Date.now()) / 1000)) : 0;
-  const joinedNames = session.players.slice(-8).map((p) => `<span class="player-chip"><i style="background:${PALETTE[(p.color || 0) % 4]}">${escapeHtml(p.name.slice(0, 1).toUpperCase())}</i>${escapeHtml(p.name)}</span>`).join('');
+  const playerRows = [...session.players].sort((a, b) => a.name.localeCompare(b.name)).map((p) => `<li><i style="--player-color:${PALETTE[(p.color || 0) % 4]}">${escapeHtml(p.name.slice(0, 1).toUpperCase())}</i><span>${escapeHtml(p.name)}</span></li>`).join('');
   let centerContent = '';
   if (phase === 'lobby') {
-    if (!isHost) return participantShell(joinScreen());
-    centerContent = `<div class="live-lobby"><h1>Room ready</h1><p>Share the PIN or scan the QR code to join.</p><div class="join-display"><div><small>JOIN WITH PIN</small><b>${session.pin}</b><button class="copy-pin" data-action="copy-pin">${icon('copy', 14)} Copy PIN</button></div><img class="join-qr" alt="QR code to join this quiz" src="${qrUrl(session.joinUrl)}"></div><div class="lobby-players"><div class="lobby-player-header"><span>${icon('people', 15)} IN THE ROOM</span><b>${session.players.length} <small>/ 500</small></b></div>${session.players.length ? `<div class="player-chips">${joinedNames}${session.players.length > 8 ? `<span class="player-chip more-players">+ ${session.players.length - 8} more</span>` : ''}</div>` : '<div class="waiting-empty"><span class="waiting-pulse"></span> Waiting for the first player to join...</div>'}</div><button class="btn btn-primary start-game-btn" data-action="start-game" ${session.players.length ? '' : 'disabled'}>Start the quiz ${icon('arrow', 16)}</button><span class="field-hint lobby-join-hint">Players can join from their own device with the PIN or QR code.</span></div>`;
+    if (!isHost) return participantShell(joinScreen(), isDiwali);
+    centerContent = `<div class="live-lobby"><h1>Room ready</h1><p>Share the PIN or scan the QR code to join.</p><div class="join-display"><div><small>JOIN WITH PIN</small><b>${session.pin}</b><button class="copy-pin" data-action="copy-pin">${icon('copy', 14)} Copy PIN</button></div><img class="join-qr" alt="QR code to join this quiz" src="${qrUrl(session.joinUrl)}"></div><section class="lobby-players" aria-label="Participants"><div class="airport-display" role="status" aria-live="polite" aria-label="${session.players.length} participants joined"><div class="airport-digits">${String(session.players.length).padStart(3, '0').split('').map((digit) => `<span>${digit}</span>`).join('')}</div><div class="airport-caption"><b>PARTICIPANTS JOINED</b><span>OF 500</span></div></div><details class="participant-list" ${state.participantsExpanded ? 'open' : ''}><summary><span>${icon('people', 16)} Participant names</span><b>${session.players.length} <span>${session.players.length === 1 ? 'person' : 'people'}</span></b></summary>${session.players.length ? `<ol>${playerRows}</ol>` : '<p class="participant-list-empty">Names will appear here as people join.</p>'}</details></section><button class="btn btn-primary start-game-btn" data-action="start-game" ${session.players.length ? '' : 'disabled'}>Start the quiz ${icon('arrow', 16)}</button><span class="field-hint lobby-join-hint">Players can join from their own device with the PIN or QR code.</span></div>`;
   } else if (phase === 'finished') {
-    centerContent = `<div class="live-finished"><div class="finish-sparkle">✳</div><span class="section-kicker">THAT’S A WRAP</span><h1>Look at you<br><em>go.</em></h1><p>${escapeHtml(session.quiz.title)} is all done. Here are the brains of the bunch.</p><div class="podium">${ranks.slice(0, 3).map((p, i) => `<div class="podium-person place-${i + 1}"><span class="podium-medal">${i === 0 ? '✦' : i + 1}</span><b>${escapeHtml(p.name)}</b><span>${p.score} points</span><div class="podium-block">${i + 1}</div></div>`).join('') || '<p>No players joined this round.</p>'}</div><button class="btn btn-primary" data-action="home">Back to your studio ${icon('arrow', 16)}</button></div>`;
+    centerContent = `<div class="live-finished"><span class="section-kicker">FINAL RANKING</span><h1>Quiz results</h1><p>${escapeHtml(session.quiz.title)}</p><div class="podium">${ranks.slice(0, 3).map((p, i) => `<div class="podium-person place-${i + 1}"><span class="podium-medal">${i + 1}</span><div class="winner-details"><b>${escapeHtml(p.name)}</b><span>${p.score} points</span></div><span class="winner-place">${['1st place', '2nd place', '3rd place'][i]}</span></div>`).join('') || '<p>No players joined this round.</p>'}</div><button class="btn btn-primary" data-action="home">Back to your studio ${icon('arrow', 16)}</button></div>`;
   } else if (phase === 'question' && player) {
     const prevAnswer = session.own_answer ?? state.answers.get(`${session.id}:${qIndex}:${player.id}`);
     centerContent = `<div class="participant-question"><div class="participant-status"><span>QUESTION ${qIndex + 1} OF ${total}</span><span class="live-clock ${remaining <= 5 ? 'urgent' : ''}">${icon('clock', 15)} <b data-countdown="${remaining}" data-deadline="${session.deadline}">${remaining}s</b></span></div><h1>${escapeHtml(question.text)}</h1>${prevAnswer !== undefined && prevAnswer !== null ? `<div class="answer-confirmed">${icon('check', 19)} Answer locked in. Nice one!</div>` : `<div class="participant-options">${question.options.map((option, i) => `<button class="participant-option" style="--option-color:${PALETTE[i]}" data-action="submit-answer" data-option="${i}" ${remaining === 0 ? 'disabled' : ''}><span>${ANSWER_LABELS[i]}</span>${escapeHtml(option)}</button>`).join('')}</div>`}</div>`;
@@ -161,8 +201,8 @@ function livePage() {
     const answerCount = tallies.reduce((sum, count) => sum + Number(count), 0);
     centerContent = `<div class="host-question"><div class="host-q-top"><span class="live-tag"><i></i> LIVE NOW</span><span class="question-progress">QUESTION ${qIndex + 1} <i>/</i> ${total}</span></div><h1>${escapeHtml(question.text)}</h1><div class="host-options-grid">${question.options.map((option, i) => `<div class="host-option" style="--option-color:${PALETTE[i]}"><span>${ANSWER_LABELS[i]}</span><b>${escapeHtml(option)}</b><small>${tallies[i]} answers</small></div>`).join('')}</div><div class="question-live-footer"><span>${icon('people', 16)} <b>${answerCount}</b> of ${session.player_count ?? session.players.length} answered</span><span class="live-clock ${remaining <= 5 ? 'urgent' : ''}">${icon('clock', 15)} <b data-countdown="${remaining}" data-deadline="${session.deadline}">${remaining}s</b></span></div>${phase === 'question' && remaining === 0 ? `<button class="btn btn-primary advance-btn" data-action="show-results">Reveal answer and rankings ${icon('arrow', 16)}</button>` : ''}</div>`;
   }
-  if (!isHost) return participantShell(`<header class="participant-header"><span>${escapeHtml(session.quiz.title)}</span><b>${escapeHtml(player.name)}</b></header><section class="participant-panel">${centerContent}</section>`);
-  return shell(`<div class="live-layout ${phase === 'lobby' ? 'host-lobby-layout' : ''}"><div class="live-topline"><div><span class="live-tag"><i></i> ${phase === 'finished' ? 'GAME COMPLETE' : 'LIVE QUIZ'}</span><span class="live-quiz-name">${escapeHtml(session.quiz.title)}</span></div><div class="live-top-actions">${isHost && phase === 'question' ? `<button class="btn btn-primary btn-small" data-action="show-results">Reveal answers</button>` : ''}</div></div><div class="live-main-panel">${centerContent}</div>${phase !== 'finished' && phase !== 'lobby' ? `<aside class="live-side-panel"><div class="room-pin-panel"><div class="live-panel-label">ROOM PIN</div><div class="room-pin-number">${session.pin}</div><div class="room-pin-bottom"><span>${icon('people', 14)} ${session.player_count ?? session.players.length} joined</span><button data-action="copy-pin">${icon('copy', 13)} Copy</button></div></div>${isHost && phase === 'reveal' ? `<button class="btn btn-primary next-question-btn" data-action="next-step">${qIndex + 1 >= total ? 'Show the podium' : 'Next question'} ${icon('arrow', 15)}</button>` : ''}</aside>` : ''}</div>`);
+  if (!isHost) return participantShell(`<header class="participant-header"><span>${escapeHtml(session.quiz.title)}</span><b>${escapeHtml(player.name)}</b></header><section class="participant-panel">${centerContent}</section>`, isDiwali);
+  return shell(`<div class="live-layout ${phase === 'lobby' ? 'host-lobby-layout' : ''} ${isDiwali ? 'diwali-theme' : ''}">${isDiwali ? diwaliBanner() : ''}<div class="live-topline"><div><span class="live-tag"><i></i> ${phase === 'finished' ? 'GAME COMPLETE' : 'LIVE QUIZ'}</span><span class="live-quiz-name">${escapeHtml(session.quiz.title)}</span></div><div class="live-top-actions">${isHost && phase === 'question' ? `<button class="btn btn-primary btn-small" data-action="show-results">Reveal answers</button>` : ''}</div></div><div class="live-main-panel">${centerContent}</div>${phase !== 'finished' && phase !== 'lobby' ? `<aside class="live-side-panel"><div class="room-pin-panel"><div class="live-panel-label">ROOM PIN</div><div class="room-pin-number">${session.pin}</div><div class="room-pin-bottom"><span>${icon('people', 14)} ${session.player_count ?? session.players.length} joined</span><button data-action="copy-pin">${icon('copy', 13)} Copy</button></div></div>${isHost && phase === 'reveal' ? `<button class="btn btn-primary next-question-btn" data-action="next-step">${qIndex + 1 >= total ? 'Show the podium' : 'Next question'} ${icon('arrow', 15)}</button>` : ''}</aside>` : ''}</div>`);
 }
 
 function joinScreen() {
@@ -469,6 +509,9 @@ async function handleClick(event) {
 }
 
 document.addEventListener('click', handleClick);
+document.addEventListener('toggle', (event) => {
+  if (event.target.matches('.participant-list')) state.participantsExpanded = event.target.open;
+}, true);
 document.addEventListener('input', (event) => {
   if (event.target.matches('.question-editor [data-field="option"]') && event.target.value.trim()) event.target.classList.remove('invalid-field');
   if (event.target.id === 'quiz-search') { state.search = event.target.value; const position = event.target.selectionStart; render(); const next = document.getElementById('quiz-search'); next?.focus(); next?.setSelectionRange(position, position); }
