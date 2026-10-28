@@ -107,7 +107,7 @@ function icon(name, size = 18) {
 
 function shell(content) {
   const active = state.page;
-  return `<div class="app-shell" data-theme="dark">
+  return `<div class="app-shell" data-theme="light">
     <aside class="sidebar" id="sidebar">
       <a class="brand" href="#" data-action="home"><span class="brand-mark">${icon('spark', 21)}</span><span>quizzy<span class="brand-period">.</span></span></a>
       <div class="workspace-label">WORKSPACE</div>
